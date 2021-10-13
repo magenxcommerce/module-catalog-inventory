@@ -17,8 +17,9 @@ class AddStockStatusToCollection
      * @var \Magento\CatalogInventory\Helper\Stock
      */
     protected $stockHelper;
-
+    
     /**
+     * @param \Magento\CatalogInventory\Model\Configuration $configuration
      * @param \Magento\CatalogInventory\Helper\Stock $stockHelper
      */
     public function __construct(
@@ -28,8 +29,6 @@ class AddStockStatusToCollection
     }
 
     /**
-     * Add stock filter to collection.
-     *
      * @param Collection $productCollection
      * @param bool $printQuery
      * @param bool $logQuery

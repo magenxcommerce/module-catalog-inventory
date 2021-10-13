@@ -85,7 +85,7 @@ class AdvancedInventory extends AbstractModifier
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function modifyData(array $data)
     {
@@ -163,7 +163,7 @@ class AdvancedInventory extends AbstractModifier
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function modifyMeta(array $meta)
     {
@@ -175,8 +175,6 @@ class AdvancedInventory extends AbstractModifier
     }
 
     /**
-     * Modify UI Quantity and Stock status attribute meta.
-     *
      * @return void
      */
     private function prepareMeta()
@@ -185,7 +183,12 @@ class AdvancedInventory extends AbstractModifier
         $pathField = $this->arrayManager->findPath($fieldCode, $this->meta, null, 'children');
 
         if ($pathField) {
+            $labelField = $this->arrayManager->get(
+                $this->arrayManager->slicePath($pathField, 0, -2) . '/arguments/data/config/label',
+                $this->meta
+            );
             $fieldsetPath = $this->arrayManager->slicePath($pathField, 0, -4);
+
             $this->meta = $this->arrayManager->merge(
                 $pathField . '/arguments/data/config',
                 $this->meta,
@@ -196,7 +199,6 @@ class AdvancedInventory extends AbstractModifier
                     'scopeLabel' => '[GLOBAL]',
                     'imports' => [
                         'visible' => '${$.provider}:data.product.stock_data.manage_stock',
-                        '__disableTmpl' => ['visible' => false],
                     ],
                 ]
             );
@@ -212,9 +214,10 @@ class AdvancedInventory extends AbstractModifier
                 'formElement' => 'container',
                 'componentType' => 'container',
                 'component' => "Magento_Ui/js/form/components/group",
-                'label' => false,
+                'label' => $labelField,
                 'breakLine' => false,
                 'dataScope' => $fieldCode,
+                'scopeLabel' => '[GLOBAL]',
                 'source' => 'product_details',
                 'sortOrder' => (int) $this->arrayManager->get(
                     $this->arrayManager->slicePath($pathField, 0, -2) . '/arguments/data/config/sortOrder',
@@ -240,10 +243,8 @@ class AdvancedInventory extends AbstractModifier
                 ],
                 'imports' => [
                     'handleChanges' => '${$.provider}:data.product.stock_data.is_qty_decimal',
-                    '__disableTmpl' => ['handleChanges' => false],
                 ],
                 'sortOrder' => 10,
-                'disabled' => $this->locator->getProduct()->isLockedAttribute($fieldCode),
             ];
             $advancedInventoryButton['arguments']['data']['config'] = [
                 'displayAsLink' => true,
@@ -257,9 +258,6 @@ class AdvancedInventory extends AbstractModifier
                         'actionName' => 'toggleModal',
                     ],
                 ],
-                'imports' => [
-                    'childError' => 'product_form.product_form.advanced_inventory_modal.stock_data:error',
-                ],
                 'title' => __('Advanced Inventory'),
                 'provider' => false,
                 'additionalForGroup' => true,
@@ -270,6 +268,7 @@ class AdvancedInventory extends AbstractModifier
                 'qty' => $qty,
                 'advanced_inventory_button' => $advancedInventoryButton,
             ];
+
             $this->meta = $this->arrayManager->merge(
                 $fieldsetPath . '/children',
                 $this->meta,

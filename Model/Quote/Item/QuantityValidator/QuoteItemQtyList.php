@@ -5,9 +5,6 @@
  */
 namespace Magento\CatalogInventory\Model\Quote\Item\QuantityValidator;
 
-/**
- * Class QuoteItemQtyList collects qty of quote items
- */
 class QuoteItemQtyList
 {
     /**
@@ -20,7 +17,6 @@ class QuoteItemQtyList
 
     /**
      * Get product qty includes information from all quote items
-     *
      * Need be used only in singleton mode
      *
      * @param int   $productId
@@ -33,7 +29,9 @@ class QuoteItemQtyList
     public function getQty($productId, $quoteItemId, $quoteId, $itemQty)
     {
         $qty = $itemQty;
-        if (isset($this->_checkedQuoteItems[$quoteId][$productId]['qty']) && !in_array(
+        if (isset(
+            $this->_checkedQuoteItems[$quoteId][$productId]['qty']
+        ) && !in_array(
             $quoteItemId,
             $this->_checkedQuoteItems[$quoteId][$productId]['items']
         )
@@ -41,10 +39,8 @@ class QuoteItemQtyList
             $qty += $this->_checkedQuoteItems[$quoteId][$productId]['qty'];
         }
 
-        if ($quoteItemId !== null) {
-            $this->_checkedQuoteItems[$quoteId][$productId]['qty'] = $qty;
-            $this->_checkedQuoteItems[$quoteId][$productId]['items'][] = $quoteItemId;
-        }
+        $this->_checkedQuoteItems[$quoteId][$productId]['qty'] = $qty;
+        $this->_checkedQuoteItems[$quoteId][$productId]['items'][] = $quoteItemId;
 
         return $qty;
     }

@@ -85,7 +85,6 @@ class StockManagement implements StockManagementInterface, RegisterProductSaleIn
 
     /**
      * Subtract product qtys from stock.
-     *
      * Return array of items that require full save.
      *
      * @param string[] $items
@@ -142,25 +141,17 @@ class StockManagement implements StockManagementInterface, RegisterProductSaleIn
     }
 
     /**
-     * @inheritdoc
+     * @param string[] $items
+     * @param int $websiteId
+     * @return bool
      */
     public function revertProductsSale($items, $websiteId = null)
     {
         //if (!$websiteId) {
         $websiteId = $this->stockConfiguration->getDefaultScopeId();
         //}
-        $revertItems = [];
-        foreach ($items as $productId => $qty) {
-            $stockItem = $this->stockRegistryProvider->getStockItem($productId, $websiteId);
-            $canSubtractQty = $stockItem->getItemId() && $this->canSubtractQty($stockItem);
-            if (!$canSubtractQty || !$this->stockConfiguration->isQty($stockItem->getTypeId())) {
-                continue;
-            }
-            $revertItems[$productId] = $qty;
-        }
-        $this->qtyCounter->correctItemsQty($revertItems, $websiteId, '+');
-
-        return $revertItems;
+        $this->qtyCounter->correctItemsQty($items, $websiteId, '+');
+        return true;
     }
 
     /**
@@ -204,8 +195,6 @@ class StockManagement implements StockManagementInterface, RegisterProductSaleIn
     }
 
     /**
-     * Get stock resource.
-     *
      * @return ResourceStock
      */
     protected function getResource()

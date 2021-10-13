@@ -26,7 +26,7 @@ use Magento\Quote\Model\Quote\Item;
  * @since 100.0.2
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
- * @deprecated 100.3.0 Replaced with Multi Source Inventory
+ * @deprecated 2.3.0 Replaced with Multi Source Inventory
  * @link https://devdocs.magento.com/guides/v2.3/inventory/index.html
  * @link https://devdocs.magento.com/guides/v2.3/inventory/catalog-inventory-replacements.html
  */
@@ -222,11 +222,9 @@ class QuantityValidator
     {
         $removeErrors = true;
         foreach ($options as $option) {
-            $optionValue = $option->getValue();
-            $optionQty = $quoteItem->getData('qty') * $optionValue;
             $result = $this->stockState->checkQtyIncrements(
                 $option->getProduct()->getId(),
-                $optionQty,
+                $quoteItem->getData('qty'),
                 $option->getProduct()->getStore()->getWebsiteId()
             );
             if ($result->getHasError()) {
